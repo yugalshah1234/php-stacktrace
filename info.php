@@ -1,21 +1,24 @@
 <?php
-require_once '/home/amit/vendor/autoload.php';
-
-echo "start sending";
-use Monolog\Logger;
-use Monolog\Handler\LogglyHandler;
-use Monolog\Handler\StreamHandler;
-use Monolog\Formatter\LogglyFormatter;
-
-$log = new Logger('appName');
-$log->pushHandler(new LogglyHandler('45866f2f-57c3-459c-bc3d-a19214c34edf/tag/monolog', Logger::WARNING));
-try {
-	echo "Withing try block";
+openlog('php', LOG_CONS | LOG_NDELAY | LOG_PID, LOG_USER | LOG_PERROR);
+function checkNum($number) {
+  if($number>1) {
+    throw new Exception("Value must be 1 or below");
+  }
+  return true;
 }
-catch(Exception $e) {
-	 echo 'Message: ' .$e->getMessage();
+function callback1($number) {
+ checkNum($number);
 }
-
-$log->addWarning('test logs to loggly');
-echo "end sending";
+function callback2($number) {
+  callback1($number);
+}
+function callback3($number) {
+  callback2($number);
+}
+function divideByZero() {
+  echo 10/0;
+}
+callback3(2);
+divideByZero();
+closelog();
 ?>
